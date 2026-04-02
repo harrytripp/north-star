@@ -8,10 +8,11 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello, world")
+	fmt.Println("===== Calling local agent =====")
 
 	dir, _ := os.Getwd()
-	fmt.Printf("Running in: %s\n", dir)
+	fmt.Printf("\nRunning in: %s\n", dir)
 
-	agents.Response()
+	// agents.Response()
+	fmt.Println(agents.Response())
 }
