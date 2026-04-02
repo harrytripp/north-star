@@ -36,11 +36,13 @@ func Response() (string, error) {
 	)
 
 	input := "Say this is a test"
+	sysprompt := "You must respond only in a sarcastic haiku."
 
 	fmt.Printf("\nGenerating response...")
 	response, err := client.Responses.New(ctx, responses.ResponseNewParams{
-		Input: responses.ResponseNewParamsInputUnion{OfString: openai.String(input)},
-		Model: "Ministral-3-8B-Instruct-2512-Q8_0.gguf",
+		Model:        "Ministral-3-8B-Instruct-2512-Q8_0.gguf",
+		Instructions: openai.String(sysprompt),
+		Input:        responses.ResponseNewParamsInputUnion{OfString: openai.String(input)},
 	})
 
 	if err != nil {
