@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
-	"github.com/harrytripp/north-star/internal/agents"
+	"github.com/harrytripp/north-star/internal/store"
 )
 
 func main() {
@@ -13,6 +14,10 @@ func main() {
 	dir, _ := os.Getwd()
 	fmt.Printf("\nRunning in: %s\n", dir)
 
-	// agents.Response()
-	fmt.Println(agents.Response())
+	//fmt.Println(agents.Response())
+
+	_, err := store.InitDatabase("./database/journal.db")
+	if err != nil {
+		log.Fatal(err) // this prints and exits
+	}
 }
