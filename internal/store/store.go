@@ -69,6 +69,43 @@ func (store *Store) CreateEntry(entry *Entry) (int64, error) {
 	return id, nil
 }
 
+func (store *Store) AllEntries() ([]Entry, error) {
+	var entries []Entry
+
+	rows, err := store.db.QueryContext(
+		context.Background(),
+		`SELECT id, title, input, output, model, visible, created_at, reveal_at FROM entries;`,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var e EntryRow
+		err := rows.Scan(&e.ID, &e.Title, &e.Input, &e.Output, &e.Model, &e.Visible, &e.CreatedAt, &e.RevealAt)
+		if err != nil {
+			return nil, err
+		}
+		entries = append(entries, e.Entry)
+	}
+
+	return entries, nil
+}
+
+func (store *Store) EntryByModel(model string) ([]EntryRow, error) {
+	var returnedEntries []EntryRow
+	rows, err := store.db.QueryContext(
+		context.Background(),
+		`SELECT * FROM entries WHERE model=?;`, model,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	return returnedEntries, nil
+}
+
 //func update
 
 //func delete
