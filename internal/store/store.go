@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	_ "modernc.org/sqlite" // Underscore registers this drive with the database/sql package
 
@@ -45,7 +46,10 @@ func InitDatabase(dbPath string) (*Store, error) {
 	return &Store{db: db}, nil
 }
 
-func (store *Store) createEntry(entry *Entry) (int64, error) {
+func (store *Store) CreateEntry(entry *Entry) (int64, error) {
+	if entry.Input == "" {
+		return 0, fmt.Errorf("input cannot be empty")
+	}
 	revealAt := time.Now().Add(time.Hour)
 
 	result, err := store.db.ExecContext(

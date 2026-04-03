@@ -16,8 +16,20 @@ func main() {
 
 	//fmt.Println(agents.Response())
 
-	_, err := store.InitDatabase("./database/journal.db")
-	if err != nil {
-		log.Fatal(err) // this prints and exits
+	// Initialises database and assigns it to the var "db"
+	db, initErr := store.InitDatabase("./database/journal.db")
+	if initErr != nil {
+		log.Fatal(initErr) // this prints any returned errors and exits
 	}
+
+	entry := store.Entry{
+		Title: "my title",
+		Model: "Ministral-3-8B-Instruct-2512-Q8_0.gguf",
+	}
+
+	_, creaErr := db.CreateEntry(&entry)
+	if creaErr != nil {
+		log.Fatal(creaErr)
+	}
+
 }
