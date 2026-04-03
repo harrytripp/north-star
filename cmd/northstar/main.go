@@ -25,7 +25,7 @@ func main() {
 	entry := store.Entry{
 		Title: "my title",
 		Input: "I jumped the shark.",
-		Model: "Ministral-3-8B-Instruct-2512-Q8_0.gguf",
+		Model: "gemma-4",
 	}
 
 	_, err = db.CreateEntry(&entry)
@@ -34,6 +34,12 @@ func main() {
 	}
 
 	query, err := db.AllEntries()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("%+v\n", query)
+
+	query, err = db.EntryByModel("gemma-4")
 	if err != nil {
 		log.Fatal(err)
 	}

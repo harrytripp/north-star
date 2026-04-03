@@ -74,7 +74,7 @@ func (store *Store) AllEntries() ([]Entry, error) {
 
 	rows, err := store.db.QueryContext(
 		context.Background(),
-		`SELECT id, title, input, output, model, visible, created_at, reveal_at FROM entries;`,
+		`SELECT id, title, input, output, model, created_at, reveal_at, visible FROM entries;`,
 	)
 	if err != nil {
 		return nil, err
@@ -83,7 +83,7 @@ func (store *Store) AllEntries() ([]Entry, error) {
 
 	for rows.Next() {
 		var e EntryRow
-		err := rows.Scan(&e.ID, &e.Title, &e.Input, &e.Output, &e.Model, &e.Visible, &e.CreatedAt, &e.RevealAt)
+		err := rows.Scan(&e.ID, &e.Title, &e.Input, &e.Output, &e.Model, &e.CreatedAt, &e.RevealAt, &e.Visible)
 		if err != nil {
 			return nil, err
 		}
@@ -93,8 +93,9 @@ func (store *Store) AllEntries() ([]Entry, error) {
 	return entries, nil
 }
 
-func (store *Store) EntryByModel(model string) ([]EntryRow, error) {
-	var returnedEntries []EntryRow
+func (store *Store) EntryByModel(model string) ([]Entry, error) {
+	var entries []Entry
+
 	rows, err := store.db.QueryContext(
 		context.Background(),
 		`SELECT * FROM entries WHERE model=?;`, model,
@@ -103,7 +104,17 @@ func (store *Store) EntryByModel(model string) ([]EntryRow, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	return returnedEntries, nil
+
+	for rows.Next() {
+		var e EntryRow
+		err := rows.Scan(&e.ID, &e.Title, &e.Input, &e.Output, &e.Model, &e.CreatedAt, &e.RevealAt, &e.Visible)
+		if err != nil {
+			return nil, err
+		}
+		entries = append(entries, e.Entry)
+	}
+
+	return entries, nil
 }
 
 //func update
