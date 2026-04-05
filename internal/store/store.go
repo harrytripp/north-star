@@ -1,6 +1,7 @@
 package store
 
 import (
+	"bufio"
 	"context"
 	"database/sql"
 	"fmt"
@@ -69,6 +70,39 @@ func (store *Store) CreateEntry(entry *Entry) (int64, error) {
 	return id, nil
 }
 
+func (store *Store) Input() (*Entry, error) {
+	// Get user inputs and save as strings
+	var title, body string
+	scanner := bufio.NewScanner(os.Stdin)
+
+	fmt.Print("Title:\n")
+	// Read a single line
+	if scanner.Scan() {
+		title = scanner.Text()
+	}
+	fmt.Print("Body: (type 'exit' to end input)\n")
+	// Read multiple lines
+	for scanner.Scan() {
+		body = scanner.Text()
+		if body == "exit" {
+			break
+		}
+	}
+	if body == "" {
+		return nil, fmt.Errorf("Body cannot be empty")
+	}
+
+	// Build user inputs into the Entry struct
+	entry := &Entry{
+		Title: title,
+		Input: body,
+	}
+
+	fmt.Println("===== RECORD SAVED =====\n", title, "\n", body)
+
+	return entry, nil
+}
+
 func (store *Store) AllEntries() ([]Entry, error) {
 	var entries []Entry
 
@@ -108,6 +142,30 @@ func (store *Store) EntryByModel(model string) ([]Entry, error) {
 	for rows.Next() {
 		var e EntryRow
 		err := rows.Scan(&e.ID, &e.Title, &e.Input, &e.Output, &e.Model, &e.CreatedAt, &e.RevealAt, &e.Visible)
+		if err != nil {
+			return nil, err
+		}
+		entries = append(entries, e.Entry)
+	}
+
+	return entries, nil
+}
+
+func (store *Store) View() ([]Entry, error) {
+	var entries []Entry
+
+	rows, err := store.db.QueryContext(
+		context.Background(),
+		`SELECT * FROM entries;`,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var e EntryRow
+		err := rows.Scan(&e.ID, &e.Title, &e.Input, &e.Output)
 		if err != nil {
 			return nil, err
 		}
