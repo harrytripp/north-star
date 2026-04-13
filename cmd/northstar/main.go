@@ -40,12 +40,16 @@ func main() {
 
 		switch choice {
 		case "1":
+			// Take use input, save struct output as variable
 			entry := must(db.Input()).(*store.Entry)
-			fmt.Println("Entry added", entry)
+			// Pass user input and add to database
+			must(db.CreateEntry(entry))
+
+			fmt.Println("Entry added: ", entry)
 
 		case "2":
 			test := store.Entry{
-				Title: "my title",
+				Title: "Radical",
 				Input: "I jumped the shark.",
 			}
 
