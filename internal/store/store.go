@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	_ "modernc.org/sqlite" // Underscore registers this drive with the database/sql package
 
@@ -73,6 +74,7 @@ func (store *Store) CreateEntry(entry *Entry) (int64, error) {
 func (store *Store) Input() (*Entry, error) {
 	// Get user inputs and save as strings
 	var title, body string
+	var builder strings.Builder
 	scanner := bufio.NewScanner(os.Stdin)
 
 	fmt.Print("Title:\n")
@@ -80,14 +82,17 @@ func (store *Store) Input() (*Entry, error) {
 	if scanner.Scan() {
 		title = scanner.Text()
 	}
+
 	fmt.Print("Body: (type 'exit' to end input)\n")
 	// Read multiple lines
 	for scanner.Scan() {
-		body = scanner.Text()
+		body := scanner.Text()
 		if body == "exit" {
 			break
 		}
+		builder.WriteString(body + "\n") // Add to builder
 	}
+	body = builder.String() // Get complete text with all lines
 	if body == "" {
 		return nil, fmt.Errorf("Body cannot be empty")
 	}
