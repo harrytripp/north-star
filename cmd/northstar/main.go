@@ -32,6 +32,9 @@ func main() {
 		fmt.Println("1. Add manual entry")
 		fmt.Println("2. Add test entry")
 		fmt.Println("3. View database")
+		fmt.Println("4. Delete entry") // TODO
+		fmt.Println("5. Update entry") // TODO
+		fmt.Println("6. Get insight")  // TODO
 		fmt.Println("0. Exit")
 		fmt.Print("Choose: ")
 

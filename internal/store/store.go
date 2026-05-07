@@ -132,30 +132,6 @@ func (store *Store) AllEntries() ([]Entry, error) {
 	return entries, nil
 }
 
-func (store *Store) EntryByModel(model string) ([]Entry, error) {
-	var entries []Entry
-
-	rows, err := store.db.QueryContext(
-		context.Background(),
-		`SELECT * FROM entries WHERE model=?;`, model,
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var e EntryRow
-		err := rows.Scan(&e.ID, &e.Title, &e.Input, &e.Output, &e.Model, &e.CreatedAt, &e.RevealAt, &e.Visible)
-		if err != nil {
-			return nil, err
-		}
-		entries = append(entries, e.Entry)
-	}
-
-	return entries, nil
-}
-
 func (store *Store) View() ([]Entry, error) {
 	var entries []Entry
 
@@ -185,3 +161,27 @@ func (store *Store) View() ([]Entry, error) {
 //func delete
 
 //func llmOutput
+
+func (store *Store) EntryByModel(model string) ([]Entry, error) {
+	var entries []Entry
+
+	rows, err := store.db.QueryContext(
+		context.Background(),
+		`SELECT * FROM entries WHERE model=?;`, model,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var e EntryRow
+		err := rows.Scan(&e.ID, &e.Title, &e.Input, &e.Output, &e.Model, &e.CreatedAt, &e.RevealAt, &e.Visible)
+		if err != nil {
+			return nil, err
+		}
+		entries = append(entries, e.Entry)
+	}
+
+	return entries, nil
+}
